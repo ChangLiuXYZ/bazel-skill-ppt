@@ -1,0 +1,23 @@
+.github/workflows/deploy.yml
+  16eb9ca0eaaa8a83 1-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "2b49131d184a101749781d460f543cd81a0ea32d",
+  "prompts": {
+    "16eb9ca0eaaa8a83": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_28f10bcdeffera7wRLisA4gYMa",
+        "model": "unknown"
+      },
+      "human_author": "Chang Liu",
+      "messages": [],
+      "total_additions": 44,
+      "total_deletions": 0,
+      "accepted_lines": 44,
+      "overriden_lines": 0
+    }
+  }
+}
