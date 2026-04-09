@@ -681,6 +681,136 @@ Subagent 2 完成 → 归还 bazel-demo-2
 </div>
 
 ---
+layout: section
+transition: slide-up
+---
+
+# 批量迁移带来新的问题
+
+电脑越跑越慢
+
+---
+transition: fade
+---
+
+# 问题：fseventsd 吃掉整台 Mac
+
+<div v-click class="mt-4 grid grid-cols-2 gap-4">
+
+<div class="p-3 bg-red-900/20 rounded text-sm">
+  <div class="text-red-400 font-bold mb-2">😱 问题现象</div>
+  <div>批量迁移跑了一晚上，早上来看执行进度不理想</div>
+  <div class="mt-2 opacity-80">CPU 和内存全部爆满，系统整体卡顿</div>
+</div>
+
+<div v-click class="p-3 bg-slate-700/30 rounded text-sm">
+  <div class="text-yellow-400 font-bold mb-2">🔍 排查后发现</div>
+  <div>罪魁祸首不是 AI，而是 Bazel 编译产物触发了系统级的文件监听风暴</div>
+</div>
+
+</div>
+
+<div class="mt-6 flex items-center justify-center gap-6">
+
+<div v-click class="text-center p-4 bg-slate-800/50 rounded w-44">
+  <div class="text-3xl mb-2">⚡️</div>
+  <div class="text-sm">Bazel 并发编译<br>海量文件写入</div>
+</div>
+
+<div v-click class="text-2xl opacity-50">→</div>
+
+<div v-click class="text-center p-4 bg-orange-900/30 rounded w-52">
+  <div class="text-3xl mb-2">🔍</div>
+  <div class="text-sm">Spotlight 疯狂建索引<br>30+ mdworker 进程</div>
+</div>
+
+<div v-click class="text-2xl opacity-50">→</div>
+
+<div v-click class="text-center p-4 bg-red-900/30 rounded w-52">
+  <div class="text-3xl mb-2">💀</div>
+  <div class="text-sm">fseventsd ~100% CPU<br>内存积累至 14GB</div>
+</div>
+
+</div>
+
+<div v-click class="mt-4 text-center text-sm p-3 bg-slate-700/30 rounded">
+VS Code 的 Code Helper 也在监听这些目录的文件变化，进一步加剧 CPU 占用
+</div>
+
+<!--
+根本原因：Bazel 编译产物（bazel-bin、bazel-out 等）的大量文件写入，触发了 fseventsd → Spotlight → mdworker 这条事件链。VS Code 的文件监听雪上加霜。
+-->
+
+---
+layout: two-cols
+transition: fade
+---
+
+# 解决：三步切断事件链
+
+<v-clicks>
+
+**1. 排除 Spotlight 索引**
+
+系统设置 → 聚焦 → 搜索隐私，将 `/Users/changliu/workspace` 加入排除列表
+
+Bazel 编译产物（`bazel-bin`、`bazel-out` 等临时文件）不再进入 Spotlight 索引，mds_stores、mdworker 进程大幅减少
+
+**2. 排除 VS Code 文件监听**
+
+在 `.vscode/settings.json` 中配置：
+
+```json
+{
+  "files.watcherExclude": {
+    "**/bazel-bin/**": true,
+    "**/bazel-out/**": true,
+    "**/bazel-testlogs/**": true
+  },
+  "search.exclude": {
+    "**/bazel-bin/**": true,
+    "**/bazel-out/**": true
+  }
+}
+```
+
+VS Code 不再监听 Bazel 编译产物目录，Code Helper 进程的 CPU 占用恢复正常
+
+**3. 立即释放内存（可选）**
+
+```bash
+sudo pkill -HUP fseventsd
+```
+
+</v-clicks>
+
+::right::
+
+<div v-click class="ml-6 mt-2">
+
+<div class="text-sm opacity-60 mb-3">事件链：切断前 vs 切断后</div>
+
+<div class="p-3 bg-red-900/20 rounded mb-4 text-sm">
+  <div class="text-red-400 font-bold mb-1">切断前</div>
+  Bazel 写入 → fseventsd 积累 → Spotlight 建索引 → 系统卡顿
+</div>
+
+<div class="p-3 bg-green-900/20 rounded text-sm">
+  <div class="text-green-400 font-bold mb-1">切断后</div>
+  Bazel 写入 → fseventsd 正常 → Spotlight 不介入 → 系统流畅
+</div>
+
+<div class="mt-6 p-3 bg-blue-900/20 rounded text-sm">
+  💡 批量自动化任务跑起来之后，<strong>系统级的资源竞争</strong>也要纳入考虑
+</div>
+
+</div>
+
+<!--
+这个问题在单次迁移时几乎感知不到，批量并发之后才暴露出来。解决思路就是切断"文件写入 → 系统监听"这条事件链的每一个节点。
+-->
+
+---
 transition: slide-up
 ---
 
