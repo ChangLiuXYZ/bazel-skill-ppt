@@ -15,7 +15,7 @@ duration: 15min
 五次迭代，从跑通到跑稳再到批量提速
 
 <div class="abs-br m-6 text-sm opacity-50">
-  CloudMusic iOS · 小组内部分享 · 15min
+  小组内部分享 · 15min
 </div>
 
 <!--
