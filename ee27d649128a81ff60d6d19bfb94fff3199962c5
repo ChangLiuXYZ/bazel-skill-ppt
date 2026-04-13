@@ -1,0 +1,23 @@
+slides.md
+  170e5a4075792e33 26-46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "ee27d649128a81ff60d6d19bfb94fff3199962c5",
+  "prompts": {
+    "170e5a4075792e33": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_289285ba9ffek3CERL0CdRn7be",
+        "model": "unknown"
+      },
+      "human_author": "Chang Liu",
+      "messages": [],
+      "total_additions": 24,
+      "total_deletions": 2,
+      "accepted_lines": 22,
+      "overriden_lines": 0
+    }
+  }
+}
