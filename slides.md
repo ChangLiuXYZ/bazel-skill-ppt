@@ -23,6 +23,28 @@ duration: 15min
 -->
 
 ---
+layout: center
+transition: fade-out
+---
+
+# 今天分享什么？
+
+<div class="mt-8 text-xl leading-loose opacity-90">
+
+<span class="text-orange-400 font-bold">本次分享聚焦于 Skill 的升级演进</span>
+
+略过 Bazel 迁移的技术细节
+
+从最初**能跑起来**，到经过五次迭代**真正好用**，<br>
+直到最终**自动化完成整个迁移流程**。
+
+</div>
+
+<!--
+点明主题：今天的核心不是迁移本身，而是 Skill 的进化过程——如何让 AI 从勉强能用变得真正好用。
+-->
+
+---
 layout: statement
 transition: fade-out
 ---
